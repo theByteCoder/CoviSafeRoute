@@ -20,11 +20,22 @@
     </select>
     <label class="lat-long" for="lat_long">{{getLatLong()}}</label>
   </div>
-  <!-- <agm-map [zoom]="13" [latitude]="lat" [longitude]="lng" (mapReady)="onMapReady($event)"> -->
   <agm-map [zoom]="13" [latitude]="lat" [longitude]="lng">
-    <!-- <agm-marker [latitude]="lat" [longitude]="lng" [markerDraggable]="true"></agm-marker> -->
-    <agm-circle *ngFor="let data of circle" [latitude]="splitGeocode(data.geocord, 0)"
-      [longitude]="splitGeocode(data.geocord, 1)" [fillColor]="data.color" [radius]="data.radius">
+    <agm-marker [latitude]="lat" [longitude]="lng">
+    </agm-marker>
+    <agm-circle *ngFor="let data of circle" [latitude]="data.lat" [longitude]="data.lng" [fillColor]="data.color"
+      [radius]="data.radius">
     </agm-circle>
+    <!-- <agm-circle *ngFor="let data of circle" [latitude]="data.lat" [longitude]="data.lng" [radius]="data.radius"
+      [fillColor]="data.color" (mouseOver)="infoWindow.open();" (mouseOut)="infoWindow.close();">
+      <agm-info-window [latitude]="data.lat" [longitude]="data.lng" [disableAutoPan]="false" #infoWindow>
+        <div>
+          <span>
+            <b>{{data.name}}</b>
+            <b>({{data.updatedAt}}) </b>
+          </span>
+        </div>
+      </agm-info-window>
+    </agm-circle> -->
   </agm-map>
 </div>

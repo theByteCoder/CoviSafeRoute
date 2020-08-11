@@ -14,7 +14,7 @@ export class AppComponent {
   lat: any;
   lng: any;
   city: any;
-  public circle: any;
+  circle: any;
   readonly URL = 'https://www.covidhotspots.in/covid/city';
 
   getLatLong() {
@@ -27,15 +27,29 @@ export class AppComponent {
 
   async getHostspots() {
     if (this.city !== undefined) {
-      await fetch(`https://www.covidhotspots.in/covid/city/${this.city.replace(" ", "")}/hotspots`).then(response => response.json()).then(results => {
-        this.circle = results;
-      })
+      await fetch(`${this.URL}/${this.city.replace(" ", "")}/hotspots`)
+        .then(response => response.json())
+        .then(results => {
+          let res = results.map(item => {
+            if (item.hasOwnProperty("geocord")) {
+              item.lat = parseFloat(item["geocord"].split(',')[0]);
+              item.lng = parseFloat(item["geocord"].split(',')[1]);
+              item.radius = 200;
+              item.color = item.zone.toLowerCase()
+            }
+            // delete item["geocord"];
+            // delete item["name"];
+            // delete item["updatedAt"];
+            // delete item["zone"];
+            return {
+              ...item
+            }
+          })
+          this.circle = res;
+          // this.circle = [{ lat: 22.649865, lng: 88.3985632, radius: 800, color: 'red' },
+          // { lat: 22.6822535, lng: 88.4390899, radius: 800, color: 'red' }];
+        })
     }
-  }
-
-  splitGeocode(string, nb) {
-    var array = string.split(',');
-    return parseFloat(array[nb]);
   }
 
   constructor(private mapsAPILoader: MapsAPILoader) {
@@ -59,27 +73,6 @@ export class AppComponent {
     });
   }
 
-  // onMapReady(map) {
-  //   this.initDrawingManager(map);
-  // }
-
-  // initDrawingManager(map: any) {
-  //   const options = {
-  //     drawingControl: true,
-  //     drawingControlOptions: {
-  //       drawingModes: ["polygon"]
-  //     },
-  //     polygonOptions: {
-  //       draggable: true,
-  //       editable: true
-  //     },
-  //     drawingMode: google.maps.drawing.OverlayType.POLYGON
-  //   };
-
-  //   const drawingManager = new google.maps.drawing.DrawingManager(options);
-  //   drawingManager.setMap(map);
-  // }
-
 
   getLocationName(callback) {
     let latitude = this.lat, longitude = this.lng;
@@ -92,7 +85,16 @@ export class AppComponent {
     geocoder.geocode({ 'latLng': latlng }, function (results, status) {
       if (status == google.maps.GeocoderStatus.OK) {
         if (results[1]) {
-          locationName = results[1].address_components[5].long_name;
+          results[1].address_components.map(item => {
+            for (var key in item) {
+              if (item.hasOwnProperty(key)) {
+                if (item[key]['0'] === 'locality' && item[key]['1'] === 'political') {
+                  locationName = item['long_name'];
+                  break;
+                }
+              }
+            }
+          })
         }
         else {
           locationName = "Unknown";
