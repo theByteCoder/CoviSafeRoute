@@ -1,5 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
+import { NgModule, NgZone } from '@angular/core';
 import { AppComponent } from './app.component';
 import { AgmCoreModule } from '@agm/core';
 
@@ -11,7 +11,7 @@ import { AgmCoreModule } from '@agm/core';
     BrowserModule,
     AgmCoreModule.forRoot({
       apiKey: 'AIzaSyAXToOum9YMycph1nW6EZ-wCWnIbEB-ZMI',
-      libraries: ['drawing']
+      libraries: ['drawing', 'places']
     })
   ],
   providers: [],
