@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild, ElementRef, AfterViewInit, NgZone } from '@angular/core';
 import { MapsAPILoader } from "@agm/core";
 declare const google: any;
 
@@ -15,7 +15,15 @@ export class AppComponent {
   lng: any;
   city: any;
   circle: any;
+  // ngZone: any;
+  address: any;
+  web_site: any;
+  name: any;
+  zip_code: any;
+  zoom: any;
   readonly URL = 'https://www.covidhotspots.in/covid/city';
+
+  @ViewChild('search') searchElementRef: ElementRef;
 
   getLatLong() {
     if (this.lng !== undefined) {
@@ -105,6 +113,29 @@ export class AppComponent {
       }
       callback(locationName);
     });
+  }
+
+  findAdress() {
+    this.mapsAPILoader.load().then(() => {
+      let autocomplete = new google.maps.places.Autocomplete(this.searchElementRef.nativeElement);
+      autocomplete.addListener("place_changed", () => {
+        new NgZone({}).run(() => {
+          // some details
+          let place: google.maps.places.PlaceResult = autocomplete.getPlace();
+          this.address = place.formatted_address;
+          this.web_site = place.website;
+          this.name = place.name;
+          this.zip_code = place.address_components[place.address_components.length - 1].long_name;
+          //set latitude, longitude and zoom
+          this.lat = place.geometry.location.lat();
+          this.lng = place.geometry.location.lng();
+        });
+      });
+    });
+  }
+
+  ngAfterViewInit() {
+    this.findAdress();
   }
 
 }

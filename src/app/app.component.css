@@ -24,3 +24,8 @@
 agm-map {
     height: 500px;
 }
+.form-control{
+  width: 200px;
+  flex: 0.2;
+  margin: auto;
+}
