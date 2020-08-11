@@ -129,6 +129,12 @@ export class AppComponent {
           //set latitude, longitude and zoom
           this.lat = place.geometry.location.lat();
           this.lng = place.geometry.location.lng();
+          this.getLocationName((result) => {
+            this.city = result;
+            this.getHostspots()
+            document.getElementById(`city_${this.city}`).setAttribute('selected', '');
+          });
+          this.getHostspots();
         });
       });
     });
