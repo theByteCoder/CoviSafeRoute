@@ -1,0 +1,26 @@
+.content {
+  padding: 50px 100px;
+}
+.flexbox {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+.flexbox > h2 {
+  flex: 0.2;
+}
+.flexbox > select {
+  flex: 0.2;
+  margin: auto;
+}
+.flexbox > .cur_city {
+  flex: 0.2;
+  margin: auto;
+}
+.flexbox > .lat_long {
+  flex: 0.2;
+  margin-left: 20px;
+}
+agm-map {
+    height: 500px;
+}

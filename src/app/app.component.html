@@ -1,0 +1,27 @@
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAXToOum9YMycph1nW6EZ-wCWnIbEB-ZMI&libraries=places" async
+  defer></script>
+<div class="content">
+  <h2>{{ title }}</h2>
+  <div class="flexbox">
+    <div class="form-group">
+      <label>Enter address: </label>
+      <input type="text" class="form-control" (keydown.enter)="$event.preventDefault()"
+        placeholder="Search Nearest Location" autocorrect="off" autocapitalize="off" spellcheck="off" type="text"
+        #search>
+    </div>
+    <select name="Select City" id="city">
+      <option value="Select">Select City</option>
+      <option id="city_Delhi" value="Delhi">Delhi</option>
+      <option id="city_Kolkata" value="Kolkata">Kolkata</option>
+      <option id="city_Mumbai" value="Mumbai">Mumbai</option>
+      <option id="city_Pune" value="Pune">Pune</option>
+      <option id="city_Bangalore" value="Bangalore">Bangalore</option>
+      <option id="city_Hyderabad" value="Hyderabad">Hyderabad</option>
+    </select>
+    <label class="lat-long" for="lat_long">{{getLatLong()}}</label>
+  </div>
+  <agm-map [zoom]="13" [latitude]="lat" [longitude]="lng">
+    <agm-marker [latitude]="lat" [longitude]="lng" [markerDraggable]="true">
+    </agm-marker>
+  </agm-map>
+</div>
