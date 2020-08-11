@@ -34,7 +34,7 @@ export class AppComponent {
             if (item.hasOwnProperty("geocord")) {
               item.lat = parseFloat(item["geocord"].split(',')[0]);
               item.lng = parseFloat(item["geocord"].split(',')[1]);
-              item.radius = 200;
+              item.radius = 100;
               item.color = item.zone.toLowerCase()
             }
             // delete item["geocord"];
