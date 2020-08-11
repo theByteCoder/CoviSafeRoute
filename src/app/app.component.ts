@@ -14,20 +14,28 @@ export class AppComponent {
   lat: any;
   lng: any;
   city: any;
+  public circle: any;
   readonly URL = 'https://www.covidhotspots.in/covid/city';
 
   getLatLong() {
     if (this.lng !== undefined) {
-      return `Latitude : ${this.lng} Longitude : ${this.lat}`;
+      return `Longitude : ${this.lng}  Latitude: ${this.lat}`;
     } else {
       return ""
     }
   }
 
-  getHostspots() {
-    fetch(`https://www.covidhotspots.in/covid/city/${this.city.replace(" ", "")}/hotspots`).then(response => response.json()).then(results => {
-      console.log(results)
-    })
+  async getHostspots() {
+    if (this.city !== undefined) {
+      await fetch(`https://www.covidhotspots.in/covid/city/${this.city.replace(" ", "")}/hotspots`).then(response => response.json()).then(results => {
+        this.circle = results;
+      })
+    }
+  }
+
+  splitGeocode(string, nb) {
+    var array = string.split(',');
+    return parseFloat(array[nb]);
   }
 
   constructor(private mapsAPILoader: MapsAPILoader) {
@@ -45,10 +53,33 @@ export class AppComponent {
             this.getHostspots()
             document.getElementById(`city_${this.city}`).setAttribute('selected', '');
           });
+          this.getHostspots();
         });
       }
     });
   }
+
+  // onMapReady(map) {
+  //   this.initDrawingManager(map);
+  // }
+
+  // initDrawingManager(map: any) {
+  //   const options = {
+  //     drawingControl: true,
+  //     drawingControlOptions: {
+  //       drawingModes: ["polygon"]
+  //     },
+  //     polygonOptions: {
+  //       draggable: true,
+  //       editable: true
+  //     },
+  //     drawingMode: google.maps.drawing.OverlayType.POLYGON
+  //   };
+
+  //   const drawingManager = new google.maps.drawing.DrawingManager(options);
+  //   drawingManager.setMap(map);
+  // }
+
 
   getLocationName(callback) {
     let latitude = this.lat, longitude = this.lng;

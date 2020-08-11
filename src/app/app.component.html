@@ -4,7 +4,7 @@
   <h2>{{ title }}</h2>
   <div class="flexbox">
     <div class="form-group">
-      <label>Enter address: </label>
+      <label>Enter address </label>
       <input type="text" class="form-control" (keydown.enter)="$event.preventDefault()"
         placeholder="Search Nearest Location" autocorrect="off" autocapitalize="off" spellcheck="off" type="text"
         #search>
@@ -20,8 +20,11 @@
     </select>
     <label class="lat-long" for="lat_long">{{getLatLong()}}</label>
   </div>
+  <!-- <agm-map [zoom]="13" [latitude]="lat" [longitude]="lng" (mapReady)="onMapReady($event)"> -->
   <agm-map [zoom]="13" [latitude]="lat" [longitude]="lng">
-    <agm-marker [latitude]="lat" [longitude]="lng" [markerDraggable]="true">
-    </agm-marker>
+    <!-- <agm-marker [latitude]="lat" [longitude]="lng" [markerDraggable]="true"></agm-marker> -->
+    <agm-circle *ngFor="let data of circle" [latitude]="splitGeocode(data.geocord, 0)"
+      [longitude]="splitGeocode(data.geocord, 1)" [fillColor]="data.color" [radius]="data.radius">
+    </agm-circle>
   </agm-map>
 </div>

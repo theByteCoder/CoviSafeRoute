@@ -1,0 +1,11 @@
+version: "3.4"
+
+services:
+  angular:
+    build:
+      context: "corona-safe-route/"
+    image: corona-safe-route
+    env_file:
+      - "./corona-safe-route/.env"
+    ports:
+      - 5000:3000
