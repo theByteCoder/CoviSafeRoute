@@ -6,7 +6,6 @@
     <div class="form-group">
       <input type="text" class="form-control" (keydown.enter)="$event.preventDefault()" placeholder="Search Location"
         autocorrect="off" autocapitalize="off" spellcheck="off" type="text" #search>
-      <!-- <input #search autocorrect="off" autocapitalize="off" spellcheck="off" type="text" class="form-control"> -->
     </div>
     <select name="Select City" id="city">
       <option value="Select">Select City</option>
@@ -25,16 +24,5 @@
     <agm-circle *ngFor="let data of circle" [latitude]="data.lat" [longitude]="data.lng" [fillColor]="data.color"
       [radius]="data.radius">
     </agm-circle>
-    <!-- <agm-circle *ngFor="let data of circle" [latitude]="data.lat" [longitude]="data.lng" [radius]="data.radius"
-      [fillColor]="data.color" (mouseOver)="infoWindow.open();" (mouseOut)="infoWindow.close();">
-      <agm-info-window [latitude]="data.lat" [longitude]="data.lng" [disableAutoPan]="false" #infoWindow>
-        <div>
-          <span>
-            <b>{{data.name}}</b>
-            <b>({{data.updatedAt}}) </b>
-          </span>
-        </div>
-      </agm-info-window>
-    </agm-circle> -->
   </agm-map>
 </div>
