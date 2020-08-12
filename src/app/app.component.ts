@@ -1,6 +1,8 @@
-import { Component, ViewChild, ElementRef, AfterViewInit, NgZone } from '@angular/core';
+import { Component, ViewChild, ElementRef, NgZone } from '@angular/core';
 import { MapsAPILoader } from "@agm/core";
 declare const google: any;
+
+import { ILatLng } from './directions.directive';
 
 @Component({
   selector: 'app-root',
@@ -9,6 +11,18 @@ declare const google: any;
 })
 
 export class AppComponent {
+  // Washington, DC, USA
+  origin: ILatLng = {
+    latitude: 22.652518399999998,
+    longitude: 88.3982336
+  };
+  // New York City, NY, USA
+  destination: ILatLng = {
+    latitude: 19.0759837,
+    longitude: 72.8776559
+  };
+  displayDirections = true;
+  zoom = 14;
   bounds = null;
   title = 'Corona Safe Route';
   lat: any;
@@ -20,14 +34,14 @@ export class AppComponent {
   web_site: any;
   name: any;
   zip_code: any;
-  zoom: any;
+  // zoom: any;
   readonly URL = 'https://www.covidhotspots.in/covid/city';
 
   @ViewChild('search') searchElementRef: ElementRef;
 
   getLatLong() {
     if (this.lng !== undefined) {
-      return `Longitude : ${this.lng}  Latitude: ${this.lat}`;
+      return `Latitude: ${this.lat} Longitude : ${this.lng}`;
     } else {
       return ""
     }

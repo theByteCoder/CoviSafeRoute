@@ -1,11 +1,13 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule, NgZone } from '@angular/core';
+import { NgModule, NO_ERRORS_SCHEMA, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { AppComponent } from './app.component';
 import { AgmCoreModule } from '@agm/core';
+import { DirectionsMapDirective } from './directions.directive';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    DirectionsMapDirective
   ],
   imports: [
     BrowserModule,
@@ -15,6 +17,7 @@ import { AgmCoreModule } from '@agm/core';
     })
   ],
   providers: [],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA]
 })
 export class AppModule { }

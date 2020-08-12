@@ -18,7 +18,12 @@
     </select>
     <label class="lat-long" for="lat_long">{{getLatLong()}}</label>
   </div>
-  <agm-map [zoom]="13" [latitude]="lat" [longitude]="lng">
+  <!-- <agm-map appDirectionsMap [latitude]="lat" [longitude]="lng" [showDirection]=" true" [origin]="origin"
+    [destination]="destination" [zoom]="zoom" [disableDefaultUI]="false" [zoomControl]="false">
+    <agm-marker [latitude]="origin.latitude" [longitude]="origin.longitude"></agm-marker>
+  </agm-map> -->
+  <agm-map appDirectionsMap [zoom]="13" [latitude]="lat" [longitude]="lng" [showDirection]=" true" [origin]="origin"
+    [destination]="destination">
     <agm-marker [latitude]="lat" [longitude]="lng">
     </agm-marker>
     <agm-circle *ngFor="let data of circle" [latitude]="data.lat" [longitude]="data.lng" [fillColor]="data.color"
