@@ -1,8 +1,8 @@
-import { Component, ViewChild, ElementRef, NgZone, ChangeDetectionStrategy, Input } from '@angular/core';
+import { Component, ViewChild, ElementRef, NgZone, ChangeDetectionStrategy, Input, AfterViewInit } from '@angular/core';
 import { MapsAPILoader } from "@agm/core";
 declare const google: any;
 
-import { DirectionsMapDirective, ILatLng } from './directions.directive';
+import { DirectionsMapDirective, Geocord } from './directions.directive';
 
 @Component({
   selector: 'app-root',
@@ -11,7 +11,7 @@ import { DirectionsMapDirective, ILatLng } from './directions.directive';
   changeDetection: ChangeDetectionStrategy.Default,
 })
 
-export class AppComponent {
+export class AppComponent implements AfterViewInit {
   bounds = null;
   title = 'Corona Safe Route';
   lat: any;
@@ -22,11 +22,11 @@ export class AppComponent {
   web_site: any;
   name: any;
   zip_code: any;
-  direction_origin: ILatLng = {
+  direction_origin: Geocord = {
     latitude: 0.0,
     longitude: 0.0,
   };
-  direction_destination: ILatLng = {
+  direction_destination: Geocord = {
     latitude: 0.0,
     longitude: 0.0,
   };
@@ -45,12 +45,25 @@ export class AppComponent {
   @Input() origin;
   @Input() destination;
 
+  ngAfterViewInit() {
+    this.findAdress();
+    this.findLocationFrom();
+    this.findLocationTo();
+  }
+
   onGetDirectionClick() {
-    this.direction_origin.latitude = this.origin_newlatitude;
-    this.direction_origin.longitude = this.origin_newlongitude;
+    if (this.origin_newlatitude !== undefined && this.origin_newlongitude !== undefined) {
+      this.direction_origin.latitude = this.origin_newlatitude;
+      this.direction_origin.longitude = this.origin_newlongitude;
+    } else {
+      this.direction_origin.latitude = this.lat
+      this.direction_origin.longitude = this.lng
+    }
     this.direction_destination.latitude = this.dest_newlatitude;
     this.direction_destination.longitude = this.dest_newlongitude;
-    this.directive.drawDirectionsRoute()
+    if (this.direction_destination.latitude !== undefined && this.direction_destination.longitude !== undefined) {
+      this.directive.setDirections()
+    }
   }
 
   getLatLong() {
@@ -82,8 +95,6 @@ export class AppComponent {
             }
           })
           this.circle = res;
-          // this.circle = [{ lat: 22.649865, lng: 88.3985632, radius: 800, color: 'red' },
-          // { lat: 22.6822535, lng: 88.4390899, radius: 800, color: 'red' }];
         })
     }
   }
@@ -100,13 +111,26 @@ export class AppComponent {
           this.lng = +pos.coords.longitude;
           this.getLocationName((result) => {
             this.city = result;
-            this.getHostspots()
-            document.getElementById(`city_${this.city}`).setAttribute('selected', '');
+            // this.getHostspots()
+            // document.getElementById(`city_${this.city}`).setAttribute('selected', '');
+            this.cityInDropdown(this.city);
           });
           this.getHostspots();
         });
       }
     });
+  }
+
+  cityInDropdown(cityName) {
+    let citiesElem = document.getElementById("cities");
+    if (citiesElem !== null) {
+      if (citiesElem.innerHTML.indexOf('value="' + cityName + '"') > -1) {
+        this.getHostspots()
+        document.getElementById(`city_${cityName}`).setAttribute('selected', '');
+      } else {
+        document.getElementById("city_404_Hotspot_data").setAttribute('selected', '');
+      }
+    }
   }
 
   getLocationName(callback) {
@@ -156,8 +180,9 @@ export class AppComponent {
           this.lng = place.geometry.location.lng();
           this.getLocationName((result) => {
             this.city = result;
-            this.getHostspots()
-            document.getElementById(`city_${this.city}`).setAttribute('selected', '');
+            // this.getHostspots();
+            // document.getElementById(`city_${this.city}`).setAttribute('selected', '');
+            this.cityInDropdown(this.city);
           });
           this.getHostspots();
         });
@@ -198,11 +223,4 @@ export class AppComponent {
       });
     });
   }
-
-  ngAfterViewInit() {
-    this.findAdress();
-    this.findLocationFrom();
-    this.findLocationTo();
-  }
-
 }
