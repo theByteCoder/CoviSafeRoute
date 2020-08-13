@@ -1,13 +1,13 @@
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAXToOum9YMycph1nW6EZ-wCWnIbEB-ZMI&libraries=places" async
   defer></script>
 <div class="content">
-  <h2>{{ title }}</h2>
+  <h2>{{title}}</h2>
   <div class="flexbox">
     <div class="form-group">
       <input type="text" class="form-control" (keydown.enter)="$event.preventDefault()" placeholder="Search Location"
         autocorrect="off" autocapitalize="off" spellcheck="off" type="text" #search>
     </div>
-    <select name="Select City" id="city">
+    <select name="Select City" id="cities">
       <option value="Select">Select City</option>
       <option id="city_Delhi" value="Delhi">Delhi</option>
       <option id="city_Kolkata" value="Kolkata">Kolkata</option>
@@ -15,12 +15,28 @@
       <option id="city_Pune" value="Pune">Pune</option>
       <option id="city_Bangalore" value="Bangalore">Bangalore</option>
       <option id="city_Hyderabad" value="Hyderabad">Hyderabad</option>
+      <option hidden id="city_404_Hotspot_data" value="Hotspot_data_not_found">Hotspot data not found</option>
     </select>
-    <label class="lat-long" for="lat_long">{{getLatLong()}}</label>
+    <label for="lat_long">{{getLatLong()}}</label>
   </div>
-  <agm-map [zoom]="13" [latitude]="lat" [longitude]="lng">
-    <agm-marker [latitude]="lat" [longitude]="lng">
-    </agm-marker>
+  <div id="panel">
+    <input type="text" class="form-control" (keydown.enter)="$event.preventDefault()" placeholder="From"
+      autocorrect="off" autocapitalize="off" spellcheck="off" type="text" #location_from>
+    <input type="text" class="form-control" (keydown.enter)="$event.preventDefault()" placeholder="To" autocorrect="off"
+      autocapitalize="off" spellcheck="off" type="text" #location_to>
+    <label>Mode of Travel</label>
+    <select id="mode">
+      <option value="DRIVING">Driving</option>
+      <option value="WALKING">Walking</option>
+      <option value="BICYCLING">Bicycling</option>
+      <option value="TRANSIT">Transit</option>
+    </select>
+    <button id="get-dir" (click)="onGetDirectionClick()">Get direction</button>
+  </div>
+  <br>
+  <agm-map directionsMap [zoom]="13" [latitude]="lat" [longitude]="lng" [displayDirection]=" true"
+    [origin]="direction_origin" [destination]="direction_destination">
+    <agm-marker [latitude]="lat" [longitude]="lng"></agm-marker>
     <agm-circle *ngFor="let data of circle" [latitude]="data.lat" [longitude]="data.lng" [fillColor]="data.color"
       [radius]="data.radius">
     </agm-circle>
