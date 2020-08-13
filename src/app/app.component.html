@@ -6,6 +6,11 @@
     <div class="form-group">
       <input type="text" class="form-control" (keydown.enter)="$event.preventDefault()" placeholder="Search Location"
         autocorrect="off" autocapitalize="off" spellcheck="off" type="text" #search>
+      <input type="text" class="form-control" (keydown.enter)="$event.preventDefault()" placeholder="From"
+        autocorrect="off" autocapitalize="off" spellcheck="off" type="text" #location_from>
+      <input type="text" class="form-control" (keydown.enter)="$event.preventDefault()" placeholder="To"
+        autocorrect="off" autocapitalize="off" spellcheck="off" type="text" #location_to>
+      <button (click)="onGetDirectionClick()">Get direction</button>
     </div>
     <select name="Select City" id="city">
       <option value="Select">Select City</option>
@@ -22,10 +27,19 @@
     [destination]="destination" [zoom]="zoom" [disableDefaultUI]="false" [zoomControl]="false">
     <agm-marker [latitude]="origin.latitude" [longitude]="origin.longitude"></agm-marker>
   </agm-map> -->
-  <agm-map appDirectionsMap [zoom]="13" [latitude]="lat" [longitude]="lng" [showDirection]=" true" [origin]="origin"
-    [destination]="destination">
-    <agm-marker [latitude]="lat" [longitude]="lng">
-    </agm-marker>
+  <div id="floating-panel">
+    <b>Mode of Travel: </b>
+    <select id="mode">
+      <option value="DRIVING">Driving</option>
+      <option value="WALKING">Walking</option>
+      <option value="BICYCLING">Bicycling</option>
+      <option value="TRANSIT">Transit</option>
+    </select>
+  </div>
+  <br>
+  <agm-map appDirectionsMap [zoom]="13" [latitude]="lat" [longitude]="lng" [showDirection]=" true"
+    [origin]="direction_origin" [destination]="direction_destination">
+    <agm-marker [latitude]="lat" [longitude]="lng"></agm-marker>
     <agm-circle *ngFor="let data of circle" [latitude]="data.lat" [longitude]="data.lng" [fillColor]="data.color"
       [radius]="data.radius">
     </agm-circle>

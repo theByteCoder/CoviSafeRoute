@@ -1,43 +1,57 @@
-import { Component, ViewChild, ElementRef, NgZone } from '@angular/core';
+import { Component, ViewChild, ElementRef, NgZone, ChangeDetectionStrategy, Input } from '@angular/core';
 import { MapsAPILoader } from "@agm/core";
 declare const google: any;
 
-import { ILatLng } from './directions.directive';
+import { DirectionsMapDirective, ILatLng } from './directions.directive';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+  styleUrls: ['./app.component.css'],
+  changeDetection: ChangeDetectionStrategy.Default,
 })
 
 export class AppComponent {
-  // Washington, DC, USA
-  origin: ILatLng = {
-    latitude: 22.652518399999998,
-    longitude: 88.3982336
-  };
-  // New York City, NY, USA
-  destination: ILatLng = {
-    latitude: 19.0759837,
-    longitude: 72.8776559
-  };
-  displayDirections = true;
-  zoom = 14;
   bounds = null;
   title = 'Corona Safe Route';
   lat: any;
   lng: any;
   city: any;
   circle: any;
-  // ngZone: any;
   address: any;
   web_site: any;
   name: any;
   zip_code: any;
-  // zoom: any;
+  direction_origin: ILatLng = {
+    latitude: 0.0,
+    longitude: 0.0,
+  };
+  direction_destination: ILatLng = {
+    latitude: 0.0,
+    longitude: 0.0,
+  };
+  origin_newlatitude: any;
+  origin_newlongitude: any;
+  dest_newlatitude: any;
+  dest_newlongitude: any;
+  displayDirections = true;
+  zoom = 14;
   readonly URL = 'https://www.covidhotspots.in/covid/city';
 
   @ViewChild('search') searchElementRef: ElementRef;
+  @ViewChild('location_from') location_fromElementRef: ElementRef;
+  @ViewChild('location_to') location_toElementRef: ElementRef;
+  @ViewChild(DirectionsMapDirective) directive;
+  @Input() origin;
+  @Input() destination;
+
+  onGetDirectionClick() {
+    this.direction_origin.latitude = this.origin_newlatitude;
+    this.direction_origin.longitude = this.origin_newlongitude;
+    this.direction_destination.latitude = this.dest_newlatitude;
+    this.direction_destination.longitude = this.dest_newlongitude;
+    this.directive.drawDirectionsRoute()
+  }
 
   getLatLong() {
     if (this.lng !== undefined) {
@@ -95,7 +109,6 @@ export class AppComponent {
     });
   }
 
-
   getLocationName(callback) {
     let latitude = this.lat, longitude = this.lng;
     if (isNaN(parseFloat(latitude)) || isNaN(parseFloat(longitude))) {
@@ -134,13 +147,11 @@ export class AppComponent {
       let autocomplete = new google.maps.places.Autocomplete(this.searchElementRef.nativeElement);
       autocomplete.addListener("place_changed", () => {
         new NgZone({}).run(() => {
-          // some details
           let place: google.maps.places.PlaceResult = autocomplete.getPlace();
           this.address = place.formatted_address;
           this.web_site = place.website;
           this.name = place.name;
           this.zip_code = place.address_components[place.address_components.length - 1].long_name;
-          //set latitude, longitude and zoom
           this.lat = place.geometry.location.lat();
           this.lng = place.geometry.location.lng();
           this.getLocationName((result) => {
@@ -154,8 +165,44 @@ export class AppComponent {
     });
   }
 
+  findLocationFrom() {
+    this.mapsAPILoader.load().then(() => {
+      let autocomplete = new google.maps.places.Autocomplete(this.location_fromElementRef.nativeElement);
+      autocomplete.addListener("place_changed", () => {
+        new NgZone({}).run(() => {
+          let place: google.maps.places.PlaceResult = autocomplete.getPlace();
+          this.address = place.formatted_address;
+          this.web_site = place.website;
+          this.name = place.name;
+          this.zip_code = place.address_components[place.address_components.length - 1].long_name;
+          this.origin_newlatitude = place.geometry.location.lat();
+          this.origin_newlongitude = place.geometry.location.lng();
+        });
+      });
+    });
+  }
+
+  findLocationTo() {
+    this.mapsAPILoader.load().then(() => {
+      let autocomplete = new google.maps.places.Autocomplete(this.location_toElementRef.nativeElement);
+      autocomplete.addListener("place_changed", () => {
+        new NgZone({}).run(() => {
+          let place: google.maps.places.PlaceResult = autocomplete.getPlace();
+          this.address = place.formatted_address;
+          this.web_site = place.website;
+          this.name = place.name;
+          this.zip_code = place.address_components[place.address_components.length - 1].long_name;
+          this.dest_newlatitude = place.geometry.location.lat();
+          this.dest_newlongitude = place.geometry.location.lng();
+        });
+      });
+    });
+  }
+
   ngAfterViewInit() {
     this.findAdress();
+    this.findLocationFrom();
+    this.findLocationTo();
   }
 
 }

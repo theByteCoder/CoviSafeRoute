@@ -27,7 +27,7 @@ export class DirectionsMapDirective implements OnInit, OnChanges {
     drawDirectionsRoute() {
         this.gmapsApi.getNativeMap().then(map => {
             if (!this.directionsRenderer) {
-                this.directionsRenderer = new google.maps.DirectionsRenderer({ suppressMarkers: true });
+                this.directionsRenderer = new google.maps.DirectionsRenderer({ suppressMarkers: false, suppressInfoWindows: false, routeIndex: 1 });
             }
             const directionsRenderer = this.directionsRenderer;
 
@@ -37,14 +37,13 @@ export class DirectionsMapDirective implements OnInit, OnChanges {
                 directionsService.route({
                     origin: { lat: this.origin.latitude, lng: this.origin.longitude },
                     destination: { lat: this.destination.latitude, lng: this.destination.longitude },
-                    waypoints: [],
-                    optimizeWaypoints: true,
+                    // waypoints: [],
+                    provideRouteAlternatives: true,
+                    // optimizeWaypoints: true,
                     travelMode: 'DRIVING'
                 }, (response, status) => {
                     if (status === 'OK') {
                         directionsRenderer.setDirections(response);
-                    } else {
-                        console.log('Failed status : ' + status);
                     }
                 });
             }
