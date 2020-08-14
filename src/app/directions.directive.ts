@@ -11,7 +11,7 @@ export interface Geocord {
     selector: '[directionsMap]'
 })
 
-export class DirectionsMapDirective implements OnInit, OnChanges {
+export class DirectionsMapDirective implements OnChanges {
     @Input() origin: Geocord;
     @Input() destination: Geocord;
     @Input() displayDirection: boolean;
@@ -20,9 +20,10 @@ export class DirectionsMapDirective implements OnInit, OnChanges {
 
     constructor(private mapsApi: GoogleMapsAPIWrapper) { }
 
-    ngOnInit() {
-        this.setDirections();
-    }
+    // not required as directions will not be fetched during initial render
+    // ngOnInit() {
+    //     this.setDirections();
+    // }
 
     ngOnChanges(changes: SimpleChanges) {
         if (changes.destination || changes.displayDirection) {
@@ -31,9 +32,12 @@ export class DirectionsMapDirective implements OnInit, OnChanges {
                     this.directionsRenderer.setDirections({ routes: [] });
                     return;
                 }
-            } else {
-                this.setDirections();
             }
+            // not required as this gets hit during initial render
+            // where origin and destination are 0.0
+            // else {
+            //     this.setDirections();
+            // }
         }
     }
 
