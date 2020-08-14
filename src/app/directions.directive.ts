@@ -1,6 +1,6 @@
 import { Directive, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { GoogleMapsAPIWrapper } from '@agm/core';
-declare var google: any;
+declare let google: any;
 
 export interface Geocord {
     latitude: number;
@@ -17,6 +17,8 @@ export class DirectionsMapDirective implements OnChanges {
     @Input() displayDirection: boolean;
 
     public directionsRenderer: any;
+    stepDisplay: any;
+    markerArray = [];
 
     constructor(private mapsApi: GoogleMapsAPIWrapper) { }
 
@@ -41,10 +43,10 @@ export class DirectionsMapDirective implements OnChanges {
         }
     }
 
-    setDirections() {
+    getDirections() {
         this.mapsApi.getNativeMap().then(map => {
             if (!this.directionsRenderer) {
-                this.directionsRenderer = new google.maps.DirectionsRenderer({ suppressMarkers: false, suppressInfoWindows: false, routeIndex: 1 });
+                this.directionsRenderer = new google.maps.DirectionsRenderer({ suppressMarkers: false, suppressInfoWindows: false });
             }
             const directionsRenderer = this.directionsRenderer;
             if (this.displayDirection && this.destination) {
@@ -57,10 +59,34 @@ export class DirectionsMapDirective implements OnChanges {
                     travelMode: 'DRIVING'
                 }, (response, status) => {
                     if (status === 'OK') {
-                        directionsRenderer.setDirections(response);
+                        for (let eachRoute = 0; eachRoute < response.routes.length; eachRoute++) {
+                            let directionsRenderer_eachRoute = new google.maps.DirectionsRenderer();
+                            directionsRenderer_eachRoute.setDirections(response);
+                            directionsRenderer_eachRoute.setRouteIndex(eachRoute);
+                            directionsRenderer_eachRoute.setMap(map);
+                        }
                     }
                 });
             }
         });
+    }
+
+    attachInstructionText(marker, text, map) {
+        google.maps.event.addListener(marker, 'click', function () {
+            this.stepDisplay.setContent(text);
+            this.stepDisplay.open(map, marker);
+        });
+    }
+
+    showSteps(directionResult, map) {
+        let route = directionResult.routes[0].legs[0];
+        for (let eachStep = 0; eachStep < route.steps.length; eachStep++) {
+            let marker = new google.maps.Marker({
+                position: route.steps[eachStep].start_point,
+                map: map
+            });
+            this.attachInstructionText(marker, route.steps[eachStep].instructions, map);
+            this.markerArray[eachStep] = marker;
+        }
     }
 }

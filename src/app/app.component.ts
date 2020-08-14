@@ -73,7 +73,7 @@ export class AppComponent implements AfterViewInit {
       }
     }
     if (this.direction_destination.latitude !== undefined && this.direction_destination.longitude !== undefined) {
-      this.directive.setDirections()
+      this.directive.getDirections()
     }
   }
 
@@ -94,7 +94,7 @@ export class AppComponent implements AfterViewInit {
             if (item.hasOwnProperty("geocord")) {
               item.lat = parseFloat(item["geocord"].split(',')[0]);
               item.lng = parseFloat(item["geocord"].split(',')[1]);
-              item.radius = 100;
+              item.radius = 30;
               item.color = item.zone.toLowerCase()
             }
             // delete item["geocord"];
@@ -156,7 +156,7 @@ export class AppComponent implements AfterViewInit {
       if (status == google.maps.GeocoderStatus.OK) {
         if (results[1]) {
           results[1].address_components.map(item => {
-            for (var key in item) {
+            for (let key in item) {
               if (item.hasOwnProperty(key)) {
                 if (item[key]['0'] === 'locality' && item[key]['1'] === 'political') {
                   locationName = item['long_name'];
