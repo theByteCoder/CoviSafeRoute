@@ -44,6 +44,7 @@ export class DirectionsMapDirective implements OnChanges {
     }
 
     getDirections() {
+        let isPathSafe = {};
         this.mapsApi.getNativeMap().then(map => {
             if (!this.directionsRenderer) {
                 this.directionsRenderer = new google.maps.DirectionsRenderer({ suppressMarkers: false, suppressInfoWindows: false });
@@ -57,10 +58,35 @@ export class DirectionsMapDirective implements OnChanges {
                     destination: { lat: this.destination.latitude, lng: this.destination.longitude },
                     provideRouteAlternatives: true,
                     travelMode: 'DRIVING'
-                }, (response, status) => {
+                }, async (response, status) => {
                     if (status === 'OK') {
+                        let paths = this.morphResponse(response);
+                        await fetch('https://www.covidhotspots.in/covid/directions', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                'destination': `${this.destination.latitude}, ${this.destination.longitude}`,
+                                'origin': `${this.origin.latitude}, ${this.origin.longitude}`,
+                                'paths': paths,
+                            }),
+                        })
+                            .then((res) => res.json())
+                            .then((data) => {
+                                isPathSafe = { ...data };
+                            })
                         for (let eachRoute = 0; eachRoute < response.routes.length; eachRoute++) {
                             let directionsRenderer_eachRoute = new google.maps.DirectionsRenderer();
+                            if (isPathSafe['paths'][eachRoute].path === response.routes[eachRoute].overview_polyline) {
+                                if (!isPathSafe['paths'][eachRoute].pathPassesContainmentZone) {
+                                    directionsRenderer_eachRoute.setOptions({
+                                        polylineOptions: {
+                                            strokeColor: 'red'
+                                        }
+                                    });
+                                }
+                            }
                             directionsRenderer_eachRoute.setDirections(response);
                             directionsRenderer_eachRoute.setRouteIndex(eachRoute);
                             directionsRenderer_eachRoute.setMap(map);
@@ -69,6 +95,18 @@ export class DirectionsMapDirective implements OnChanges {
                 });
             }
         });
+    }
+
+    morphResponse(response) {
+        const morphedResponse = []
+        for (let eachPath = 0; eachPath < response.routes.length; eachPath++) {
+            let result = {
+                'order': eachPath + 1,
+                'path': response.routes[eachPath].overview_polyline
+            }
+            morphedResponse.push(result);
+        }
+        return morphedResponse
     }
 
     attachInstructionText(marker, text, map) {
