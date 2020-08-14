@@ -79,7 +79,7 @@ export class DirectionsMapDirective implements OnChanges {
                         for (let eachRoute = 0; eachRoute < response.routes.length; eachRoute++) {
                             let directionsRenderer_eachRoute = new google.maps.DirectionsRenderer();
                             if (isPathSafe['paths'][eachRoute].path === response.routes[eachRoute].overview_polyline) {
-                                if (!isPathSafe['paths'][eachRoute].pathPassesContainmentZone) {
+                                if (isPathSafe['paths'][eachRoute].pathPassesContainmentZone) {
                                     directionsRenderer_eachRoute.setOptions({
                                         polylineOptions: {
                                             strokeColor: 'red'
