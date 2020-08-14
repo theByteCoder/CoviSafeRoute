@@ -1,4 +1,4 @@
-import { Directive, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { Directive, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { GoogleMapsAPIWrapper } from '@agm/core';
 declare var google: any;
 
