@@ -1,4 +1,4 @@
-import { Component, ViewChild, ElementRef, NgZone, ChangeDetectionStrategy, Input, AfterViewInit, OnInit } from '@angular/core';
+import { Component, ViewChild, ElementRef, NgZone, ChangeDetectionStrategy, Input, AfterViewInit } from '@angular/core';
 import { MapsAPILoader } from "@agm/core";
 declare const google: any;
 
@@ -66,11 +66,12 @@ export class AppComponent implements AfterViewInit {
     if (this.origin_city !== undefined && this.destination_city !== undefined) {
       if (this.origin_city === this.destination_city) {
         this.city = this.origin_city | this.destination_city;
-        document.getElementById(`city_${this.city}`).setAttribute('selected', '');
+        // document.getElementById(`city_${this.city}`).setAttribute('selected', '');
         this.getHostspots()
-      } else {
-        document.getElementById('cross-city_404_Hotspot_data').setAttribute('selected', '');
       }
+      // else {
+      //   document.getElementById('cross-city_404_Hotspot_data').setAttribute('selected', '');
+      // }
     }
     if (this.direction_destination.latitude !== undefined && this.direction_destination.longitude !== undefined) {
       this.directive.getDirections()
@@ -122,7 +123,7 @@ export class AppComponent implements AfterViewInit {
           this.lng = +pos.coords.longitude;
           this.getLocationName(this.lat, this.lng, (result) => {
             this.city = result;
-            this.cityInDropdown(this.city);
+            // this.cityInDropdown(this.city);
           });
           this.getHostspots();
         });
@@ -130,17 +131,18 @@ export class AppComponent implements AfterViewInit {
     });
   }
 
-  cityInDropdown(cityName) {
-    let citiesElem = document.getElementById("cities");
-    if (citiesElem !== null) {
-      if (citiesElem.innerHTML.indexOf('value="' + cityName + '"') > -1) {
-        this.getHostspots()
-        document.getElementById(`city_${cityName}`).setAttribute('selected', '');
-      } else {
-        document.getElementById("city_404_Hotspot_data").setAttribute('selected', '');
-      }
-    }
-  }
+  // cityInDropdown(cityName) {
+  //   let citiesElem = document.getElementById("cities");
+  //   if (citiesElem !== null) {
+  //     if (citiesElem.innerHTML.indexOf('value="' + cityName + '"') > -1) {
+  //       this.getHostspots()
+  //       // document.getElementById(`city_${cityName}`).setAttribute('selected', '');
+  //     }
+  //     // else {
+  //     //   document.getElementById("city_404_Hotspot_data").setAttribute('selected', '');
+  //     // }
+  //   }
+  // }
 
   getLocationName(latitude, longitude, callback) {
     if (isNaN(parseFloat(latitude)) || isNaN(parseFloat(longitude))) {
@@ -209,7 +211,7 @@ export class AppComponent implements AfterViewInit {
             this.city = result;
             // this.getHostspots();
             // document.getElementById(`city_${this.city}`).setAttribute('selected', '');
-            this.cityInDropdown(this.city);
+            // this.cityInDropdown(this.city);
           });
           this.getHostspots();
         });
