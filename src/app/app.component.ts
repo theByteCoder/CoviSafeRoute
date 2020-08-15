@@ -38,6 +38,8 @@ export class AppComponent implements AfterViewInit {
   zoom = 14;
   origin_city: any;
   destination_city: any;
+  newlatitude: any;
+  newlongitude: any;
   readonly URL = 'https://www.covidhotspots.in/covid/city';
 
   @ViewChild('search') searchElementRef: ElementRef;
@@ -51,6 +53,13 @@ export class AppComponent implements AfterViewInit {
     this.findAdress();
     this.findLocationFrom();
     this.findLocationTo();
+  }
+
+  onGotoLocation() {
+    if (this.newlatitude !== undefined && this.newlongitude !== undefined) {
+      this.lat = this.newlatitude;
+      this.lng = this.newlongitude;
+    }
   }
 
   onGetDirectionClick() {
@@ -183,9 +192,9 @@ export class AppComponent implements AfterViewInit {
           this.web_site = place.website;
           this.name = place.name;
           this.zip_code = place.address_components[place.address_components.length - 1].long_name;
-          this.lat = place.geometry.location.lat();
-          this.lng = place.geometry.location.lng();
-          this.getLocationName(this.lat, this.lng, (result) => {
+          this.newlatitude = place.geometry.location.lat();
+          this.newlongitude = place.geometry.location.lng();
+          this.getLocationName(this.newlatitude, this.newlongitude, (result) => {
             this.city = result;
             this.getHostspots();
           });
