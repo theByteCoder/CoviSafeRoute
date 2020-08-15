@@ -65,13 +65,9 @@ export class AppComponent implements AfterViewInit {
     this.direction_destination.longitude = this.dest_newlongitude;
     if (this.origin_city !== undefined && this.destination_city !== undefined) {
       if (this.origin_city === this.destination_city) {
-        this.city = this.origin_city | this.destination_city;
-        // document.getElementById(`city_${this.city}`).setAttribute('selected', '');
+        this.city = this.origin_city;
         this.getHostspots()
       }
-      // else {
-      //   document.getElementById('cross-city_404_Hotspot_data').setAttribute('selected', '');
-      // }
     }
     if (this.direction_destination.latitude !== undefined && this.direction_destination.longitude !== undefined) {
       this.directive.getDirections()
@@ -87,6 +83,8 @@ export class AppComponent implements AfterViewInit {
   }
 
   async getHostspots() {
+    console.log(this.city);
+
     if (this.city !== undefined) {
       await fetch(`${this.URL}/${this.city.replace(" ", "")}/hotspots`)
         .then(response => response.json())
@@ -95,13 +93,9 @@ export class AppComponent implements AfterViewInit {
             if (item.hasOwnProperty("geocord")) {
               item.lat = parseFloat(item["geocord"].split(',')[0]);
               item.lng = parseFloat(item["geocord"].split(',')[1]);
-              item.radius = 30;
+              item.radius = 50;
               item.color = item.zone.toLowerCase()
             }
-            // delete item["geocord"];
-            // delete item["name"];
-            // delete item["updatedAt"];
-            // delete item["zone"];
             return {
               ...item
             }
@@ -123,26 +117,12 @@ export class AppComponent implements AfterViewInit {
           this.lng = +pos.coords.longitude;
           this.getLocationName(this.lat, this.lng, (result) => {
             this.city = result;
-            // this.cityInDropdown(this.city);
+            this.getHostspots();
           });
-          this.getHostspots();
         });
       }
     });
   }
-
-  // cityInDropdown(cityName) {
-  //   let citiesElem = document.getElementById("cities");
-  //   if (citiesElem !== null) {
-  //     if (citiesElem.innerHTML.indexOf('value="' + cityName + '"') > -1) {
-  //       this.getHostspots()
-  //       // document.getElementById(`city_${cityName}`).setAttribute('selected', '');
-  //     }
-  //     // else {
-  //     //   document.getElementById("city_404_Hotspot_data").setAttribute('selected', '');
-  //     // }
-  //   }
-  // }
 
   getLocationName(latitude, longitude, callback) {
     if (isNaN(parseFloat(latitude)) || isNaN(parseFloat(longitude))) {
@@ -209,11 +189,8 @@ export class AppComponent implements AfterViewInit {
           this.lng = place.geometry.location.lng();
           this.getLocationName(this.lat, this.lng, (result) => {
             this.city = result;
-            // this.getHostspots();
-            // document.getElementById(`city_${this.city}`).setAttribute('selected', '');
-            // this.cityInDropdown(this.city);
+            this.getHostspots();
           });
-          this.getHostspots();
         });
       });
     });
