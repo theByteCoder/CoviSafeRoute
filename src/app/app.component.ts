@@ -1,4 +1,4 @@
-import { Component, ViewChild, ElementRef, NgZone, ChangeDetectionStrategy, Input, AfterViewInit } from '@angular/core';
+import { Component, ViewChild, ElementRef, NgZone, ChangeDetectionStrategy, Input, AfterViewInit, OnInit } from '@angular/core';
 import { MapsAPILoader } from "@agm/core";
 declare const google: any;
 
@@ -54,20 +54,20 @@ export class AppComponent implements AfterViewInit {
   }
 
   onGetDirectionClick() {
-    if (this.origin_newlatitude !== undefined && this.origin_newlongitude !== undefined) {
-      this.direction_origin.latitude = this.origin_newlatitude;
-      this.direction_origin.longitude = this.origin_newlongitude;
-    } else {
+    if (this.origin_newlatitude === undefined && this.origin_newlongitude === undefined) {
       this.direction_origin.latitude = this.lat
       this.direction_origin.longitude = this.lng
+    } else {
+      this.direction_origin.latitude = this.origin_newlatitude;
+      this.direction_origin.longitude = this.origin_newlongitude;
     }
     this.direction_destination.latitude = this.dest_newlatitude;
     this.direction_destination.longitude = this.dest_newlongitude;
     if (this.origin_city !== undefined && this.destination_city !== undefined) {
       if (this.origin_city === this.destination_city) {
-        this.city = this.origin_city;
-        this.getHostspots()
+        this.city = this.origin_city | this.destination_city;
         document.getElementById(`city_${this.city}`).setAttribute('selected', '');
+        this.getHostspots()
       } else {
         document.getElementById('cross-city_404_Hotspot_data').setAttribute('selected', '');
       }
@@ -122,8 +122,6 @@ export class AppComponent implements AfterViewInit {
           this.lng = +pos.coords.longitude;
           this.getLocationName(this.lat, this.lng, (result) => {
             this.city = result;
-            // this.getHostspots()
-            // document.getElementById(`city_${this.city}`).setAttribute('selected', '');
             this.cityInDropdown(this.city);
           });
           this.getHostspots();
@@ -145,28 +143,38 @@ export class AppComponent implements AfterViewInit {
   }
 
   getLocationName(latitude, longitude, callback) {
-    // let latitude = this.lat, longitude = this.lng;
     if (isNaN(parseFloat(latitude)) || isNaN(parseFloat(longitude))) {
       return false;
     }
     let locationName;
     let geocoder = new google.maps.Geocoder();
     let latlng = new google.maps.LatLng(latitude, longitude)
-    geocoder.geocode({ 'latLng': latlng }, function (results, status) {
+    geocoder.geocode({ 'latLng': latlng }, async function (results, status) {
+      let all_cities = [];
+      await fetch("https://www.covidhotspots.in/covid/cities")
+        .then(response =>
+          response.json()
+        ).then(data => {
+          for (let eachCity = 0; eachCity < data.length; eachCity++) {
+            all_cities.push(data[eachCity]["city"]);
+          }
+        })
       if (status == google.maps.GeocoderStatus.OK) {
         if (results[1]) {
           results[1].address_components.map(item => {
             for (let key in item) {
               if (item.hasOwnProperty(key)) {
-                if (item[key]['0'] === 'locality' && item[key]['1'] === 'political') {
-                  locationName = item['long_name'];
-                }
                 if (item[key]['0'] === 'administrative_area_level_2' && item[key]['1'] === 'political') {
                   let locationName_2 = item['long_name'];
-                  if (locationName_2 !== locationName) {
+                  if (all_cities.includes(locationName_2)) {
                     locationName = locationName_2;
                     break;
-                  } else {
+                  }
+                }
+                if (item[key]['0'] === 'locality' && item[key]['1'] === 'political') {
+                  let locationName_2 = item['long_name'];
+                  if (all_cities.includes(locationName_2)) {
+                    locationName = locationName_2;
                     break;
                   }
                 }
