@@ -75,6 +75,12 @@ export class DirectionsMapDirective implements OnChanges {
                                             strokeColor: 'red'
                                         }
                                     });
+                                } else {
+                                    directionsRenderer_eachRoute.setOptions({
+                                        polylineOptions: {
+                                            strokeColor: 'green'
+                                        }
+                                    });
                                 }
                             }
                             directionsRenderer_eachRoute.setDirections(response);

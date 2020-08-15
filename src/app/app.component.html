@@ -6,6 +6,7 @@
     <div class="form-group">
       <input type="text" class="form-control" (keydown.enter)="$event.preventDefault()" placeholder="Search Location"
         autocorrect="off" autocapitalize="off" spellcheck="off" type="text" #search>
+      <button id="goto-loc" (click)="onGotoLocation()">Goto location</button>
     </div>
     <label for="lat_long">{{getLatLong()}}</label>
   </div>

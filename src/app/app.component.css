@@ -7,7 +7,12 @@
   margin-bottom: 20px;
 }
 .flexbox > div {
-  flex: 0.2;
+  flex: 0.3;
+  margin-right: 110px;
+}
+.flexbox > div > button {
+  flex: 0.3;
+  margin-left: 10px;
 }
 .flexbox > label {
   flex: 0.6;
