@@ -1,4 +1,4 @@
-import { Component, ViewChild, ElementRef, NgZone, ChangeDetectionStrategy, Input, AfterViewInit } from '@angular/core';
+import { Component, ViewChild, ElementRef, NgZone, ChangeDetectionStrategy, Input, AfterViewInit, OnInit } from '@angular/core';
 import { MapsAPILoader } from "@agm/core";
 declare const google: any;
 
@@ -11,7 +11,7 @@ import { DirectionsMapDirective, Geocord } from './directions.directive';
   changeDetection: ChangeDetectionStrategy.Default,
 })
 
-export class AppComponent implements AfterViewInit {
+export class AppComponent implements AfterViewInit, OnInit {
   bounds = null;
   title = 'Corona Safe Route';
   lat: any;
@@ -40,6 +40,8 @@ export class AppComponent implements AfterViewInit {
   destination_city: any;
   newlatitude: any;
   newlongitude: any;
+  all_cities: any = [];
+  all_cities_hotspot_data: any = {};
   readonly URL = 'https://www.covidhotspots.in/covid/city';
 
   @ViewChild('search') searchElementRef: ElementRef;
@@ -48,6 +50,10 @@ export class AppComponent implements AfterViewInit {
   @ViewChild(DirectionsMapDirective) directive;
   @Input() origin;
   @Input() destination;
+
+  ngOnInit() {
+    this.getHostspotsAllCities();
+  }
 
   ngAfterViewInit() {
     this.findAdress();
@@ -93,23 +99,55 @@ export class AppComponent implements AfterViewInit {
 
   async getHostspots() {
     if (this.city !== undefined) {
-      await fetch(`${this.URL}/${this.city.replace(" ", "")}/hotspots`)
-        .then(response => response.json())
-        .then(results => {
-          let res = results.map(item => {
-            if (item.hasOwnProperty("geocord")) {
-              item.lat = parseFloat(item["geocord"].split(',')[0]);
-              item.lng = parseFloat(item["geocord"].split(',')[1]);
-              item.radius = 50;
-              item.color = item.zone.toLowerCase()
-            }
-            return {
-              ...item
-            }
-          })
-          this.circle = res;
-        })
+      // await fetch(`${this.URL}/${this.city.replace(" ", "")}/hotspots`)
+      //   .then(response => response.json())
+      //   .then(results => {
+      let results = this.all_cities_hotspot_data[this.city]
+      let res = results.map(item => {
+        if (item.hasOwnProperty("geocord")) {
+          item.lat = parseFloat(item["geocord"].split(',')[0]);
+          item.lng = parseFloat(item["geocord"].split(',')[1]);
+          item.radius = 50;
+          item.color = item.zone.toLowerCase()
+        }
+        return {
+          ...item
+        }
+      })
+      this.circle = res;
+      // })
     }
+  }
+
+  async getHostspotsAllCities() {
+    await fetch("https://www.covidhotspots.in/covid/cities")
+      .then(response =>
+        response.json()
+      ).then(data => {
+        for (let eachCity = 0; eachCity < data.length; eachCity++) {
+          this.all_cities.push(data[eachCity]["city"]);
+        }
+      })
+    this.all_cities.map(async (cityName) => {
+      if (cityName !== undefined) {
+        await fetch(`${this.URL}/${cityName.replace(" ", "")}/hotspots`)
+          .then(response => response.json())
+          .then(results => {
+            let res = results.map(item => {
+              if (item.hasOwnProperty("geocord")) {
+                item.lat = parseFloat(item["geocord"].split(',')[0]);
+                item.lng = parseFloat(item["geocord"].split(',')[1]);
+                item.radius = 50;
+                item.color = item.zone.toLowerCase()
+              }
+              return {
+                ...item
+              }
+            })
+            this.all_cities_hotspot_data[`${cityName}`] = res;
+          })
+      }
+    });
   }
 
   constructor(private mapsAPILoader: MapsAPILoader) {
