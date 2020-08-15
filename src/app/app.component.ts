@@ -36,6 +36,8 @@ export class AppComponent implements AfterViewInit {
   dest_newlongitude: any;
   displayDirections = true;
   zoom = 14;
+  origin_city: any;
+  destination_city: any;
   readonly URL = 'https://www.covidhotspots.in/covid/city';
 
   @ViewChild('search') searchElementRef: ElementRef;
@@ -52,17 +54,27 @@ export class AppComponent implements AfterViewInit {
   }
 
   onGetDirectionClick() {
-    if (this.origin_newlatitude !== undefined && this.origin_newlongitude !== undefined) {
-      this.direction_origin.latitude = this.origin_newlatitude;
-      this.direction_origin.longitude = this.origin_newlongitude;
-    } else {
+    if (this.origin_newlatitude === undefined && this.origin_newlongitude === undefined) {
       this.direction_origin.latitude = this.lat
       this.direction_origin.longitude = this.lng
+    } else {
+      this.direction_origin.latitude = this.origin_newlatitude;
+      this.direction_origin.longitude = this.origin_newlongitude;
     }
     this.direction_destination.latitude = this.dest_newlatitude;
     this.direction_destination.longitude = this.dest_newlongitude;
+    if (this.origin_city !== undefined && this.destination_city !== undefined) {
+      if (this.origin_city === this.destination_city) {
+        this.city = this.origin_city | this.destination_city;
+        // document.getElementById(`city_${this.city}`).setAttribute('selected', '');
+        this.getHostspots()
+      }
+      // else {
+      //   document.getElementById('cross-city_404_Hotspot_data').setAttribute('selected', '');
+      // }
+    }
     if (this.direction_destination.latitude !== undefined && this.direction_destination.longitude !== undefined) {
-      this.directive.setDirections()
+      this.directive.getDirections()
     }
   }
 
@@ -83,7 +95,7 @@ export class AppComponent implements AfterViewInit {
             if (item.hasOwnProperty("geocord")) {
               item.lat = parseFloat(item["geocord"].split(',')[0]);
               item.lng = parseFloat(item["geocord"].split(',')[1]);
-              item.radius = 100;
+              item.radius = 30;
               item.color = item.zone.toLowerCase()
             }
             // delete item["geocord"];
@@ -109,11 +121,9 @@ export class AppComponent implements AfterViewInit {
         navigator.geolocation.getCurrentPosition(pos => {
           this.lat = +pos.coords.latitude;
           this.lng = +pos.coords.longitude;
-          this.getLocationName((result) => {
+          this.getLocationName(this.lat, this.lng, (result) => {
             this.city = result;
-            // this.getHostspots()
-            // document.getElementById(`city_${this.city}`).setAttribute('selected', '');
-            this.cityInDropdown(this.city);
+            // this.cityInDropdown(this.city);
           });
           this.getHostspots();
         });
@@ -121,35 +131,54 @@ export class AppComponent implements AfterViewInit {
     });
   }
 
-  cityInDropdown(cityName) {
-    let citiesElem = document.getElementById("cities");
-    if (citiesElem !== null) {
-      if (citiesElem.innerHTML.indexOf('value="' + cityName + '"') > -1) {
-        this.getHostspots()
-        document.getElementById(`city_${cityName}`).setAttribute('selected', '');
-      } else {
-        document.getElementById("city_404_Hotspot_data").setAttribute('selected', '');
-      }
-    }
-  }
+  // cityInDropdown(cityName) {
+  //   let citiesElem = document.getElementById("cities");
+  //   if (citiesElem !== null) {
+  //     if (citiesElem.innerHTML.indexOf('value="' + cityName + '"') > -1) {
+  //       this.getHostspots()
+  //       // document.getElementById(`city_${cityName}`).setAttribute('selected', '');
+  //     }
+  //     // else {
+  //     //   document.getElementById("city_404_Hotspot_data").setAttribute('selected', '');
+  //     // }
+  //   }
+  // }
 
-  getLocationName(callback) {
-    let latitude = this.lat, longitude = this.lng;
+  getLocationName(latitude, longitude, callback) {
     if (isNaN(parseFloat(latitude)) || isNaN(parseFloat(longitude))) {
       return false;
     }
     let locationName;
     let geocoder = new google.maps.Geocoder();
     let latlng = new google.maps.LatLng(latitude, longitude)
-    geocoder.geocode({ 'latLng': latlng }, function (results, status) {
+    geocoder.geocode({ 'latLng': latlng }, async function (results, status) {
+      let all_cities = [];
+      await fetch("https://www.covidhotspots.in/covid/cities")
+        .then(response =>
+          response.json()
+        ).then(data => {
+          for (let eachCity = 0; eachCity < data.length; eachCity++) {
+            all_cities.push(data[eachCity]["city"]);
+          }
+        })
       if (status == google.maps.GeocoderStatus.OK) {
         if (results[1]) {
           results[1].address_components.map(item => {
-            for (var key in item) {
+            for (let key in item) {
               if (item.hasOwnProperty(key)) {
+                if (item[key]['0'] === 'administrative_area_level_2' && item[key]['1'] === 'political') {
+                  let locationName_2 = item['long_name'];
+                  if (all_cities.includes(locationName_2)) {
+                    locationName = locationName_2;
+                    break;
+                  }
+                }
                 if (item[key]['0'] === 'locality' && item[key]['1'] === 'political') {
-                  locationName = item['long_name'];
-                  break;
+                  let locationName_2 = item['long_name'];
+                  if (all_cities.includes(locationName_2)) {
+                    locationName = locationName_2;
+                    break;
+                  }
                 }
               }
             }
@@ -178,11 +207,11 @@ export class AppComponent implements AfterViewInit {
           this.zip_code = place.address_components[place.address_components.length - 1].long_name;
           this.lat = place.geometry.location.lat();
           this.lng = place.geometry.location.lng();
-          this.getLocationName((result) => {
+          this.getLocationName(this.lat, this.lng, (result) => {
             this.city = result;
             // this.getHostspots();
             // document.getElementById(`city_${this.city}`).setAttribute('selected', '');
-            this.cityInDropdown(this.city);
+            // this.cityInDropdown(this.city);
           });
           this.getHostspots();
         });
@@ -202,6 +231,11 @@ export class AppComponent implements AfterViewInit {
           this.zip_code = place.address_components[place.address_components.length - 1].long_name;
           this.origin_newlatitude = place.geometry.location.lat();
           this.origin_newlongitude = place.geometry.location.lng();
+          if (this.origin_newlatitude !== undefined && this.origin_newlongitude !== undefined) {
+            this.getLocationName(this.origin_newlatitude, this.origin_newlongitude, (result) => {
+              this.origin_city = result;
+            });
+          }
         });
       });
     });
@@ -219,6 +253,11 @@ export class AppComponent implements AfterViewInit {
           this.zip_code = place.address_components[place.address_components.length - 1].long_name;
           this.dest_newlatitude = place.geometry.location.lat();
           this.dest_newlongitude = place.geometry.location.lng();
+          if (this.dest_newlatitude !== undefined && this.dest_newlongitude !== undefined) {
+            this.getLocationName(this.dest_newlatitude, this.dest_newlongitude, (result) => {
+              this.destination_city = result;
+            });
+          }
         });
       });
     });
