@@ -22,11 +22,6 @@ export class DirectionsMapDirective implements OnChanges {
 
     constructor(private mapsApi: GoogleMapsAPIWrapper) { }
 
-    // not required as directions will not be fetched during initial render
-    // ngOnInit() {
-    //     this.setDirections();
-    // }
-
     ngOnChanges(changes: SimpleChanges) {
         if (changes.destination || changes.displayDirection) {
             if (changes.displayDirection && !changes.displayDirection.currentValue) {
@@ -35,11 +30,6 @@ export class DirectionsMapDirective implements OnChanges {
                     return;
                 }
             }
-            // not required as this gets hit during initial render
-            // where origin and destination are 0.0
-            // else {
-            //     this.setDirections();
-            // }
         }
     }
 
