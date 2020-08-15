@@ -83,8 +83,6 @@ export class AppComponent implements AfterViewInit {
   }
 
   async getHostspots() {
-    console.log(this.city);
-
     if (this.city !== undefined) {
       await fetch(`${this.URL}/${this.city.replace(" ", "")}/hotspots`)
         .then(response => response.json())
