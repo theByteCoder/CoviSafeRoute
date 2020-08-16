@@ -1,36 +1,55 @@
+*:focus {
+  outline: none;
+}
 .content {
-  padding: 20px 50px;
+  padding: 10px 20px;
+}
+.content > h2 {
+  color: white;
 }
 .flexbox {
   display: flex;
   align-items: center;
   margin-bottom: 20px;
 }
-.flexbox > div {
-  flex: 0.3;
-  margin-right: 110px;
+.flexbox > .form-group {
+  align-items: center;
+  flex: 0.5;
 }
-.flexbox > div > button {
-  flex: 0.3;
-  margin-left: 10px;
+.flexbox > .form-group > .form-control{
+  width: 150px;
+  flex: 0.5;
+  height: 20px;
+  border-radius: 7px;
 }
-.flexbox > label {
-  flex: 0.6;
+.flexbox > .form-group > button {
+  flex: 0.5;
+  margin-left: 2px;
+  border-radius: 25px;
 }
 agm-map {
     height: 500px;
 }
-.form-control{
-  width: 200px;
-  flex: 0.2;
-  margin: 10px;
+.flexbox > #panel {
+  align-items: center;
+  flex: 0.5;
 }
-#panel > select {
-  flex: 0.2;
-  margin-left: 5px;
-  margin-right: 30px;
+.flexbox > #panel > .form-control{
+  flex: 0.25;
+  height: 20px;
+  border-radius: 7px;
 }
-#panel > label {
-  flex: 0.2;
-  margin-left: 10px;
+/* .flexbox > #panel > select {
+  flex: 0.25;
+  margin: 2px;
+  height: 25px;
+  border-radius: 7px;
+} */
+button.icons {
+  background-color: transparent;
+  border: none;
+}
+.flexbox > #panel > button {
+  flex: 0.25;
+  border-radius: 25px;
 }

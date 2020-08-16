@@ -13,7 +13,7 @@ import { DirectionsMapDirective, Geocord } from './directions.directive';
 
 export class AppComponent implements AfterViewInit, OnInit {
   bounds = null;
-  title = 'Corona Safe Route';
+  title = 'Covid Safe Route';
   lat: any;
   lng: any;
   city: any;
