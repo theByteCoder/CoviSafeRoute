@@ -8,21 +8,26 @@
         autocorrect="off" autocapitalize="off" spellcheck="off" type="text" #search>
       <button id="goto-loc" (click)="onGotoLocation()">Goto location</button>
     </div>
-    <label for="lat_long">{{getLatLong()}}</label>
-  </div>
-  <div id="panel">
-    <input type="text" class="form-control" (keydown.enter)="$event.preventDefault()" placeholder="From"
-      autocorrect="off" autocapitalize="off" spellcheck="off" type="text" #location_from>
-    <input type="text" class="form-control" (keydown.enter)="$event.preventDefault()" placeholder="To" autocorrect="off"
-      autocapitalize="off" spellcheck="off" type="text" #location_to>
-    <label>Mode of Travel</label>
-    <select id="mode">
-      <option value="DRIVING">Driving</option>
-      <option value="WALKING">Walking</option>
-      <option value="BICYCLING">Bicycling</option>
-      <option value="TRANSIT">Transit</option>
-    </select>
-    <button id="get-dir" (click)="onGetDirectionClick()">Get direction</button>
+    <!-- <label for="lat_long">{{getLatLong()}}</label> -->
+
+    <div id="panel">
+      <input type="text" class="form-control" (keydown.enter)="$event.preventDefault()" placeholder="From"
+        autocorrect="off" autocapitalize="off" spellcheck="off" type="text" #location_from>
+      <input type="text" class="form-control" (keydown.enter)="$event.preventDefault()" placeholder="To"
+        autocorrect="off" autocapitalize="off" spellcheck="off" type="text" #location_to>
+      <!-- <label><b>Mode of Travel</b></label> -->
+      <!-- <select id="mode">
+        <option value="ModeofTravel" selected hidden>Mode of Travel</option>
+        <option value="DRIVING">Driving</option>
+        <option value="WALKING">Walking</option>
+        <option value="BICYCLING">Bicycling</option>
+        <option value="TRANSIT">Transit</option>
+      </select> -->
+      <button class="icons"><img src="https://img.icons8.com/ios-filled/25/000000/car.png" /></button>
+      <button class="icons"><img src="https://img.icons8.com/ios-filled/25/000000/cycling-road--v1.png" /></button>
+      <button class="icons"><img src="https://img.icons8.com/ios-filled/25/000000/walking.png" /></button>
+      <button id="get-dir" (click)="onGetDirectionClick()">Get direction</button>
+    </div>
   </div>
   <br>
   <agm-map directionsMap [zoom]="13" [latitude]="lat" [longitude]="lng" [displayDirection]=" true"
