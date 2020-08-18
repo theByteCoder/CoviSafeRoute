@@ -14,7 +14,7 @@
 }
 .flexbox > .form-group {
   align-items: center;
-  flex: 0.5;
+  flex: 0.3;
 }
 .flexbox > .form-group > .form-control{
   width: 150px;
@@ -32,19 +32,19 @@ agm-map {
 }
 .flexbox > #panel {
   align-items: center;
-  flex: 0.5;
+  flex: 0.7;
 }
 .flexbox > #panel > .form-control{
   flex: 0.25;
   height: 20px;
   border-radius: 7px;
 }
-/* .flexbox > #panel > select {
+.flexbox > #panel > select {
   flex: 0.25;
   margin: 2px;
   height: 25px;
   border-radius: 7px;
-} */
+}
 button.icons {
   background-color: transparent;
   border: none;
