@@ -1,11 +1,14 @@
-FROM node:12.16.1-alpine as builder
+FROM node:latest as node
+LABEL author="Subhaish.Ghosh"
 WORKDIR /app
 COPY . .
 RUN npm install
+# ARG env=prod
 RUN npm run build --prod
 
 FROM nginx:alpine
-COPY --from=builder /app/dist/corona-safe-route /usr/local/Cellar/nginx/1.19.2/html
+VOLUME [ "/var/cache/nginx" ]
+COPY --from=node /app/dist/ /usr/share/nginx/html
 # COPY nginx.conf /usr/local/etc/nginx/nginx.conf
-# EXPOSE 8080
-# CMD [ "sudo", "nginx", "-g", "daemon off;" ]
+# EXPOSE 80
+# CMD [ "nginx", "-g", "daemon off;" ]
