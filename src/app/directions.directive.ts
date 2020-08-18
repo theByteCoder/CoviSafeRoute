@@ -19,6 +19,7 @@ export class DirectionsMapDirective implements OnChanges {
     public directionsRenderer: any;
     stepDisplay: any;
     markerArray = [];
+    travelModeSelector: any;
 
     constructor(private mapsApi: GoogleMapsAPIWrapper) { }
 
@@ -47,7 +48,8 @@ export class DirectionsMapDirective implements OnChanges {
                     origin: { lat: this.origin.latitude, lng: this.origin.longitude },
                     destination: { lat: this.destination.latitude, lng: this.destination.longitude },
                     provideRouteAlternatives: true,
-                    travelMode: 'DRIVING'
+                    // travelMode: 'DRIVING'
+                    travelMode: this.travelModeSelector ? this.travelModeSelector : 'DRIVING'
                 }, async (response, status) => {
                     if (status === 'OK') {
                         let paths = this.morphResponse(response);

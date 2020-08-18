@@ -61,6 +61,10 @@ export class AppComponent implements AfterViewInit, OnInit {
     this.findLocationTo();
   }
 
+  getSelectedMode($event) {
+    this.directive.travelModeSelector = $event.target.value;
+  }
+
   onGotoLocation() {
     if (this.newlatitude !== undefined && this.newlongitude !== undefined) {
       this.lat = this.newlatitude;
