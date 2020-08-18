@@ -19,7 +19,7 @@
         <!-- <option value="ModeofTravel" selected hidden>Mode of Travel</option> -->
         <option value="DRIVING" selected>Driving</option>
         <option value="WALKING">Walking</option>
-        <option value="BICYCLING">Bicycling</option>
+        <!-- <option value="BICYCLING">Bicycling</option> -->
         <!-- <option value="TRANSIT">Transit</option> -->
       </select>
       <!-- <button class="icons"><img src="https://img.icons8.com/ios-filled/25/000000/car.png" /></button>
@@ -29,11 +29,13 @@
     </div>
   </div>
   <br>
-  <agm-map directionsMap [zoom]="13" [latitude]="lat" [longitude]="lng" [displayDirection]=" true"
-    [origin]="direction_origin" [destination]="direction_destination">
-    <agm-marker [latitude]="lat" [longitude]="lng"></agm-marker>
-    <agm-circle *ngFor="let data of circle" [latitude]="data.lat" [longitude]="data.lng" [fillColor]="data.color"
-      [radius]="data.radius">
-    </agm-circle>
-  </agm-map>
+  <div class="coronamap">
+    <agm-map directionsMap [zoom]="13" [latitude]="lat" [longitude]="lng" [displayDirection]=" true"
+      [origin]="direction_origin" [destination]="direction_destination">
+      <agm-marker [latitude]="lat" [longitude]="lng"></agm-marker>
+      <agm-circle *ngFor="let data of circle" [latitude]="data.lat" [longitude]="data.lng" [fillColor]="data.color"
+        [radius]="data.radius">
+      </agm-circle>
+    </agm-map>
+  </div>
 </div>
