@@ -45,10 +45,10 @@ agm-map {
   height: 25px;
   border-radius: 7px;
 }
-/* button.icons {
+button.icons {
   background-color: transparent;
   border: none;
-} */
+}
 .flexbox > #panel > button {
   flex: 0.25;
   border-radius: 25px;
